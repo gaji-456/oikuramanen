@@ -11,6 +11,7 @@ import org.apache.http.impl.client.DefaultHttpClient;
 import org.apache.http.util.EntityUtils;
 
 import android.os.Bundle;
+import android.os.Handler;
 import android.support.v4.app.Fragment;
 import android.support.v7.app.ActionBarActivity;
 import android.util.Log;
@@ -94,20 +95,38 @@ public class MainActivity extends ActionBarActivity {
 		@Override
 		public View onCreateView(LayoutInflater inflater, ViewGroup container,
 				Bundle savedInstanceState) {
+			final Handler h = new Handler();
 			final View rootView = inflater.inflate(R.layout.fragment_main,
 					container, false);
 			Button button = (Button) rootView.findViewById(R.id.button2);
 			button.setOnClickListener(new OnClickListener() {
 				@Override
 				public void onClick(View v) {
-					EditText edit = (EditText) rootView
+					final EditText edit = (EditText) rootView
 							.findViewById(R.id.editText1);
 					Thread httpget = new Thread(new Runnable() {
 
 						@Override
 						public void run() {
 							// TODO Auto-generated method stub
-							getKawase();
+							float kawase = getKawase();
+
+							String firstnum = edit.getText().toString();
+							float en = Float.valueOf(firstnum);
+							final float result = en * kawase;
+
+							h.post(new Runnable() {
+
+								@Override
+								public void run() {
+									// TODO Auto-generated method stub
+									final EditText edit2 = (EditText) rootView
+											.findViewById(R.id.editText2);
+
+									edit2.setText("" + result);
+								}
+							});
+
 						}
 					});
 
@@ -116,27 +135,27 @@ public class MainActivity extends ActionBarActivity {
 			});
 			return rootView;
 		}
-	}
 
-	//
-	public String doGet(String url) {
-		try {
-			HttpGet method = new HttpGet(url);
+		//
+		public String doGet(String url) {
+			try {
+				HttpGet method = new HttpGet(url);
 
-			DefaultHttpClient client = new DefaultHttpClient();
+				DefaultHttpClient client = new DefaultHttpClient();
 
-			// ヘッダを設定する
-			method.setHeader("Connection", "Keep-Alive");
+				// ヘッダを設定する
+				method.setHeader("Connection", "Keep-Alive");
 
-			HttpResponse response = client.execute(method);
-			int status = response.getStatusLine().getStatusCode();
-			if (status != HttpStatus.SC_OK)
-				throw new Exception("");
+				HttpResponse response = client.execute(method);
+				int status = response.getStatusLine().getStatusCode();
+				if (status != HttpStatus.SC_OK)
+					throw new Exception("");
 
-			return EntityUtils.toString(response.getEntity(), "UTF-8");
-		} catch (Exception e) {
-			e.printStackTrace();
-			return null;
+				return EntityUtils.toString(response.getEntity(), "UTF-8");
+			} catch (Exception e) {
+				e.printStackTrace();
+				return null;
+			}
 		}
 	}
 }
