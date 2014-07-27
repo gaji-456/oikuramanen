@@ -1,15 +1,26 @@
 package com.example.oikuramanen2;
 
-import android.support.v7.app.ActionBarActivity;
-import android.support.v7.app.ActionBar;
-import android.support.v4.app.Fragment;
+import java.util.ArrayList;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
+
+import org.apache.http.HttpResponse;
+import org.apache.http.HttpStatus;
+import org.apache.http.client.methods.HttpGet;
+import org.apache.http.impl.client.DefaultHttpClient;
+import org.apache.http.util.EntityUtils;
+
+import android.R.string;
 import android.os.Bundle;
+import android.os.PatternMatcher;
+import android.support.v4.app.Fragment;
+import android.support.v7.app.ActionBarActivity;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
-import android.os.Build;
 
 public class MainActivity extends ActionBarActivity {
 
@@ -22,6 +33,18 @@ public class MainActivity extends ActionBarActivity {
 			getSupportFragmentManager().beginTransaction()
 					.add(R.id.container, new PlaceholderFragment()).commit();
 		}
+		
+		
+		Thread httpget = new Thread(new Runnable() {
+			
+			@Override
+			public void run() {
+				// TODO Auto-generated method stub
+				getKawase();
+			}
+		});
+		
+		httpget.start();
 	}
 
 	@Override
@@ -59,6 +82,57 @@ public class MainActivity extends ActionBarActivity {
 					false);
 			return rootView;
 		}
+	}
+
+	// 
+	public String doGet(String url) {
+		try {
+			HttpGet method = new HttpGet(url);
+			
+			DefaultHttpClient client = new DefaultHttpClient();
+
+			// ヘッダを設定する
+			method.setHeader("Connection", "Keep-Alive");
+
+			HttpResponse response = client.execute(method);
+			int status = response.getStatusLine().getStatusCode();
+			if (status != HttpStatus.SC_OK)
+				throw new Exception("");
+
+			return EntityUtils.toString(response.getEntity(), "UTF-8");
+		} catch (Exception e) {
+			e.printStackTrace();
+			return null;
+		}
+	}
+	
+	// 
+	public String getKawase() {
+		String html = doGet("http://shiro-kuro.tv/money/kawase/");
+		//Log.d("oikuramanen", html);
+		
+		Pattern pattern = Pattern.compile("SIZE=\"2\">([\\d.]+)</FONT>");
+		Matcher matcher = pattern.matcher(html);
+		ArrayList list = new ArrayList<>();
+		while (matcher.find()) { // Find each match in turn; String can't do this.
+			
+			String name = matcher.group(1); // Access a submatch group; String can't
+			list.add(name);
+				
+			// do this.
+			//Log.d("oikuramanen-------", name);
+			
+		}
+		Log.d("oikuramanen=======", (String)list.get(list.size()-1));
+		
+		
+		
+		//Integer kawase = (Integer)list.get(list.size()-3);
+		
+		//Log.d("oikuramanen*******", String.valueOf(kawase));
+		
+		return null;
+		
 	}
 
 }
