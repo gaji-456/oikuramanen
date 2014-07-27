@@ -10,9 +10,7 @@ import org.apache.http.client.methods.HttpGet;
 import org.apache.http.impl.client.DefaultHttpClient;
 import org.apache.http.util.EntityUtils;
 
-import android.R.string;
 import android.os.Bundle;
-import android.os.PatternMatcher;
 import android.support.v4.app.Fragment;
 import android.support.v7.app.ActionBarActivity;
 import android.util.Log;
@@ -20,7 +18,10 @@ import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
+import android.view.View.OnClickListener;
 import android.view.ViewGroup;
+import android.widget.Button;
+import android.widget.EditText;
 
 public class MainActivity extends ActionBarActivity {
 
@@ -33,18 +34,7 @@ public class MainActivity extends ActionBarActivity {
 			getSupportFragmentManager().beginTransaction()
 					.add(R.id.container, new PlaceholderFragment()).commit();
 		}
-		
-		
-		Thread httpget = new Thread(new Runnable() {
-			
-			@Override
-			public void run() {
-				// TODO Auto-generated method stub
-				getKawase();
-			}
-		});
-		
-		httpget.start();
+
 	}
 
 	@Override
@@ -72,23 +62,67 @@ public class MainActivity extends ActionBarActivity {
 	 */
 	public static class PlaceholderFragment extends Fragment {
 
+		//
+		public float getKawase() {
+			String html = doGet("http://shiro-kuro.tv/money/kawase/");
+			//
+			Pattern pattern = Pattern.compile("SIZE=\"2\">([\\d.]+)</FONT>");
+			Matcher matcher = pattern.matcher(html);
+			ArrayList list = new ArrayList();
+			while (matcher.find()) { // Find each match in turn; String can't do
+										// this.
+
+				String name = matcher.group(1); // Access a submatch group;
+												// String
+												// can't
+				list.add(name);
+
+			}
+			// Log.d("oikuramanen=======", (String)list.get(list.size()-3));
+
+			float kawase = Float.valueOf((String) list.get(list.size() - 3));
+
+			Log.d("oikuramanen*******", String.valueOf(kawase));
+
+			return kawase;
+
+		}
+
 		public PlaceholderFragment() {
 		}
 
 		@Override
 		public View onCreateView(LayoutInflater inflater, ViewGroup container,
 				Bundle savedInstanceState) {
-			View rootView = inflater.inflate(R.layout.fragment_main, container,
-					false);
+			final View rootView = inflater.inflate(R.layout.fragment_main,
+					container, false);
+			Button button = (Button) rootView.findViewById(R.id.button2);
+			button.setOnClickListener(new OnClickListener() {
+				@Override
+				public void onClick(View v) {
+					EditText edit = (EditText) rootView
+							.findViewById(R.id.editText1);
+					Thread httpget = new Thread(new Runnable() {
+
+						@Override
+						public void run() {
+							// TODO Auto-generated method stub
+							getKawase();
+						}
+					});
+
+					httpget.start();
+				}
+			});
 			return rootView;
 		}
 	}
 
-	// 
+	//
 	public String doGet(String url) {
 		try {
 			HttpGet method = new HttpGet(url);
-			
+
 			DefaultHttpClient client = new DefaultHttpClient();
 
 			// ヘッダを設定する
@@ -105,30 +139,4 @@ public class MainActivity extends ActionBarActivity {
 			return null;
 		}
 	}
-	
-	// 
-	public float getKawase() {
-		String html = doGet("http://shiro-kuro.tv/money/kawase/");
-		// 
-		Pattern pattern = Pattern.compile("SIZE=\"2\">([\\d.]+)</FONT>");
-		Matcher matcher = pattern.matcher(html);
-		ArrayList list = new ArrayList<>();
-		while (matcher.find()) { // Find each match in turn; String can't do this.
-			
-			String name = matcher.group(1); // Access a submatch group; String can't
-			list.add(name);
-				
-		}
-		// Log.d("oikuramanen=======", (String)list.get(list.size()-3));
-		
-		
-		
-		float kawase = Float.valueOf((String) list.get(list.size()-3));
-		
-		Log.d("oikuramanen*******", String.valueOf(kawase));
-		
-		return kawase;
-		
-	}
-
 }
