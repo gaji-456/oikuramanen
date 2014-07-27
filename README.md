@@ -2,3 +2,4 @@ oikuramanen
 ===========
 
 test application
+aiueo
