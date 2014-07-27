@@ -107,10 +107,9 @@ public class MainActivity extends ActionBarActivity {
 	}
 	
 	// 
-	public String getKawase() {
+	public float getKawase() {
 		String html = doGet("http://shiro-kuro.tv/money/kawase/");
-		//Log.d("oikuramanen", html);
-		
+		// 
 		Pattern pattern = Pattern.compile("SIZE=\"2\">([\\d.]+)</FONT>");
 		Matcher matcher = pattern.matcher(html);
 		ArrayList list = new ArrayList<>();
@@ -119,11 +118,8 @@ public class MainActivity extends ActionBarActivity {
 			String name = matcher.group(1); // Access a submatch group; String can't
 			list.add(name);
 				
-			// do this.
-			//Log.d("oikuramanen-------", name);
-			
 		}
-		Log.d("oikuramanen=======", (String)list.get(list.size()-3));
+		// Log.d("oikuramanen=======", (String)list.get(list.size()-3));
 		
 		
 		
@@ -131,7 +127,7 @@ public class MainActivity extends ActionBarActivity {
 		
 		Log.d("oikuramanen*******", String.valueOf(kawase));
 		
-		return null;
+		return kawase;
 		
 	}
 
