@@ -123,13 +123,13 @@ public class MainActivity extends ActionBarActivity {
 			//Log.d("oikuramanen-------", name);
 			
 		}
-		Log.d("oikuramanen=======", (String)list.get(list.size()-1));
+		Log.d("oikuramanen=======", (String)list.get(list.size()-3));
 		
 		
 		
-		//Integer kawase = (Integer)list.get(list.size()-3);
+		float kawase = Float.valueOf((String) list.get(list.size()-3));
 		
-		//Log.d("oikuramanen*******", String.valueOf(kawase));
+		Log.d("oikuramanen*******", String.valueOf(kawase));
 		
 		return null;
 		
